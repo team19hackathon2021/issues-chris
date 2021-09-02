@@ -1,0 +1,7 @@
+---
+- name: Install a recent version of conmon
+  connection: local
+  hosts: localhost
+  roles:
+    - computate.computate_conmon
+

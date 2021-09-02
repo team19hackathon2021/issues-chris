@@ -1,0 +1,7 @@
+---
+- name: Install a recent version of podman
+  connection: local
+  hosts: localhost
+  roles:
+    - computate.computate_podman
+

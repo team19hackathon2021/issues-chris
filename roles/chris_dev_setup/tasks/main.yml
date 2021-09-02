@@ -1,0 +1,31 @@
+---
+- name: Install podman and minikube
+  package:
+    name:
+      - https://storage.googleapis.com/minikube/releases/latest/minikube-latest.x86_64.rpm
+  become: yes
+  vars:
+    ansible_python_interpreter: /usr/bin/python
+  when: ansible_pkg_mgr != 'homebrew'
+- name: Add user to sudoers file
+  lineinfile:
+    path: /etc/sudoers
+    regexp: "^{{ lookup('env', 'USER') }} "
+    line: "{{ lookup('env', 'USER') }} ALL=(ALL) NOPASSWD: ALL"
+    validate: 'visudo -cf %s'
+  become: yes
+- name: Create the source directory {{ CHRIS_ULTRON_BACKEND_DIR }}
+  file:
+    name: "{{ CHRIS_ULTRON_BACKEND_DIR }}"
+    state: directory
+    owner: "{{ lookup('env', 'USER') }}"
+  become: yes
+- name: Check for the {{ CHRIS_ULTRON_BACKEND_README_PATH }}
+  stat:
+    path: "{{ CHRIS_ULTRON_BACKEND_README_PATH }}"
+  register: CHRIS_ULTRON_BACKEND_README_PATH
+- name: Clone the {{ CHRIS_ULTRON_BACKEND_NAME }} source code
+  git:
+    repo: "{{ CHRIS_ULTRON_BACKEND_REPO }}"
+    dest: "{{ CHRIS_ULTRON_BACKEND_DIR }}"
+  when: not CHRIS_ULTRON_BACKEND_README_PATH.stat.exists

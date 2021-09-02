@@ -1,0 +1,6 @@
+---
+- name: Setup ChRIS development systems. 
+  hosts: localhost
+  connection: local
+  roles:
+    - chris_dev_setup
