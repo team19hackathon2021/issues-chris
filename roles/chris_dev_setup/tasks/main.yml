@@ -1,11 +1,9 @@
 ---
-- name: Install docker, kubernetes-client and minikube
+- name: Install docker and docker compose
   package:
     name:
       - docker
       - docker-compose
-      - kubernetes-client
-      - https://storage.googleapis.com/minikube/releases/latest/minikube-latest.x86_64.rpm
   become: yes
   vars:
     ansible_python_interpreter: /usr/bin/python
