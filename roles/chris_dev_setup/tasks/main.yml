@@ -1,18 +1,26 @@
 ---
-- name: Install podman and minikube
+- name: Install docker, kubernetes-client and minikube
   package:
     name:
+      - docker
+      - docker-compose
+      - kubernetes-client
       - https://storage.googleapis.com/minikube/releases/latest/minikube-latest.x86_64.rpm
   become: yes
   vars:
     ansible_python_interpreter: /usr/bin/python
   when: ansible_pkg_mgr != 'homebrew'
-- name: Add user to sudoers file
-  lineinfile:
-    path: /etc/sudoers
-    regexp: "^{{ lookup('env', 'USER') }} "
-    line: "{{ lookup('env', 'USER') }} ALL=(ALL) NOPASSWD: ALL"
-    validate: 'visudo -cf %s'
+- name: Create docker group
+  group:
+    name: docker
+    state: present
+  become: yes
+- name: Add the user to the docker group
+  ansible.builtin.user:
+    name: "{{ lookup('env', 'USER') }}"
+    shell: /bin/bash
+    groups: docker
+    append: yes
   become: yes
 - name: Create the source directory {{ CHRIS_ULTRON_BACKEND_DIR }}
   file:
@@ -29,3 +37,7 @@
     repo: "{{ CHRIS_ULTRON_BACKEND_REPO }}"
     dest: "{{ CHRIS_ULTRON_BACKEND_DIR }}"
   when: not CHRIS_ULTRON_BACKEND_README_PATH.stat.exists
+- name: Start a docker swarm
+  shell: docker swarm init --advertise-addr 127.0.0.1
+  ignore_errors: true
+  become: yes

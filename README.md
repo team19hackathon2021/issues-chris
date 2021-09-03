@@ -1,6 +1,12 @@
 
 # ChRIS Development Setup
 
+### Prerequisite docker, not podman
+
+As big of a fan of podman/kubernetes that I am, this is a docker project, not a podman project. 
+I recommend installing docker instead. 
+
+
 ### Clone the issues-chris repository to start developing for ChRIS. 
 
 ```bash
